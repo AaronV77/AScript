@@ -1,0 +1,164 @@
+Goals:
+    - To make a C / Bash / Python interpreture for my shell.
+
+Operators: 
+    Arithmetic Operators:
+    +   -   /   *   --  ++
+
+    Relational Operators:
+    < > <= >= != == 
+
+    Logical Operators:
+    and     or      not
+
+    Bitwise and Assignment Operators:
+    - Don't worry about them just yet...
+
+Function Syntax:
+    Notes:
+        - The function syntax will be similar to python in that anything can be returned.
+        - I like the comment mechanims on defining variable types, this could get complicated
+        in the future, but easier read. If "void" is given in the comment before a function then
+        the return will be ignored if given. 
+        - For declaration of a function, it needs to come before a function that uses it. There can
+        be an update that allows for a simple declaration to be used later on.
+
+    - The way a function will resemeble is as the following:
+
+        //Python
+        def function_name():
+            return (Optional)
+        
+        // C
+        void function_name()
+            return (Optional);
+        }
+        
+        // Bash
+        function_name() {
+        }
+
+        // AScript
+        "return type (comment)" funtion_name("int (comment)" counter, "string (comment)" name) {
+            return variable;
+        }
+
+If, For, and While Syntax:
+    Notes:
+        - I am not supporting do-while and switch statments yet. For the future.
+    
+    - If statment example:
+        - I don't want the opening and closing brackets but if I don't have them then I will need to 
+        rely on indentation to understand when a function is done and when one is still going. This complicated
+        is then reuseable in for loops, funcitons, and anything else.
+        - I want to use the elif to consolidate the typding down.
+
+        //Python
+        if counter:
+        elif condition:
+        else:
+        
+        //C
+        if (counter) {
+        } else if (condition) {
+        } else {
+        }
+        
+        //Bash
+        if [ $debug_switch -eq 1 ]; then
+        elif [ "$1" == "--version" ]; then        
+        else
+        fi
+
+        //AScript
+        if (option1) {
+        } elif () {
+        } else {
+        }
+
+    - For Loop Statments example:
+        - Using commas because it is similar to the funciton arguments.
+        - This will need to be improved later on in the development of AScript.
+
+        //Python
+        for i in data:
+
+        //C
+        for (int i = 0; i < 5; ++i) {
+        }
+
+        //Bash
+        for item in "${backup_array[@]}"; do
+        done
+
+        //AScript
+        for (i=0, 5, /5) {
+        }
+    
+    - While Loop Statments example:
+
+
+        //Python
+        while break condition:
+
+        //C
+        while (break condition) {
+        }
+
+        //Bash
+        while [ $# -gt 0 ];
+        do
+            shift
+        done
+
+        //AScript
+        while (break condition) {
+        }
+
+Variables:
+    //Python
+    var = 10
+
+    //C
+    <datatype> var = 10;
+
+    //Bash
+    var=10
+
+    //AScript
+    "datatype (comment)" var = 10;
+
+Commands:
+    - Is support any shell command that is available on the system. 
+    - If a command that is found is not avaiable on the system, raise a runtime error.
+    - Anything that comes after the command is considered input to the command.
+    - Any shell command will have similar syntax to C funcitons. 
+
+    //AScript 
+    echo(Devin is $var years old.)
+
+Data-Structures Syntax:
+    - Supported data-structures are lists (python)
+
+    //AScript
+        Instantiation: list temp
+        Adding (on width): push
+        Removing (anywhere): pop
+        Dimension Increase: dim
+        Printing Everything: show
+
+Built-ins:
+    - Is the path a directory or file with the options of -d and -f. 
+    - Environment commands will collect the environment changes and do something with them.
+    - Aliasas will use the alias option and then whatever comes after it. 
+
+Other Syntax:
+    - Not worrying about space indentation or any spacing anywhere.
+    - Having semicolons to represent when a line is finished.
+    - Not having a main function is needed within the script file.
+    - You don't have to declare an environment, argc, or argv in the main function parameters.
+    - Have the datatypes be wrapped in double quotes to signify that they are important to the interperter. 
+      Since we "commander" doing this the hard way it will improve our over efficiency of figuring out the datatypes.
+      This syntax will also be used in commenting and allow the system to be both single and multiple lines. If I were 
+      to do the C sytnax for cmments then I would have to support two different types of mechanims and I don't want to do that now.
+    - For comments lets keep it with the "//" C syntax. 

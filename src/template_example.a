@@ -1,0 +1,10 @@
+
+"void" main() {
+    "This is an example of a comment"
+    "int" a = 0;
+    "int" b = 1;
+    "int" result = a + b;
+    echo(Looking at the result: $result);
+
+    return;
+}

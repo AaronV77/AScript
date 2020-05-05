@@ -1,4 +1,5 @@
 #include "dir_utility.h"
+#include "linked_list.h"
 #include "string.h"         // My string library for C
 
 #include <stdio.h>
@@ -10,6 +11,37 @@ int main_debugger_var = 0;
 void print_system_options() {
     printf("There are no options currently, please come again.\n");
     return;
+}
+
+void setup_environment(Linked_List ** env_path, char ** envp) {
+	
+	if (main_debugger_var) printf("Entering the setup_environment function.\n");
+
+    char * token;
+    char * var_temp = calloc(5, sizeof(char));
+	int env_iterator = 0;
+	while(envp[env_iterator] != NULL) {
+		if (!strstr(envp[env_iterator], "BASH")) {
+			strncpy(var_temp, envp[env_iterator], 4);
+			if (!strcmp(var_temp, "PATH")) {
+                // Subtracting 4 from the string length due to the PATH= in the front that gets chopped off in the next line.
+                char * new_path  = calloc((strlen(envp[env_iterator]) - 4) + 1, sizeof(char));
+                strncpy(new_path, &envp[env_iterator][5], (strlen(envp[env_iterator]) - 4));
+                token = strtok(new_path, ":");
+                while (token) {
+                    vec_push(env_path, strlen(token), "string", token);
+                    token = strtok(NULL, ":");
+                }
+                free(new_path);
+            }
+		}
+		env_iterator++;	
+	}
+    free(var_temp);
+
+	if (main_debugger_var) printf("Leaving the setup_environment function.\n");
+
+	return;
 }
 
 int main(int argc, char * argv[], char * envp[]) {
@@ -45,6 +77,10 @@ int main(int argc, char * argv[], char * envp[]) {
         return 0;
     }
 
+    // Grab the PATH environment variable and save the sections to a linked list data structure.
+    Linked_List * env_path = NULL;
+    setup_environment(&env_path, envp); 
+
     // Open the file for reading.
     source_fp  = fopen(source_file_location, "r");
     if (!source_fp) {
@@ -79,6 +115,7 @@ int main(int argc, char * argv[], char * envp[]) {
                             for (int i = 0; i < 5; ++i) {
                                 if (!strcmp(line_parts->array, datatypes[i])) {
                                     printf("Found a datatype: %s\n", line_parts->array);
+                                    found_datatype = 1;
                                     // Save the Current Datatype.
                                     break;
                                 }
@@ -105,7 +142,9 @@ int main(int argc, char * argv[], char * envp[]) {
                     parenth_flag = 0;
                 } else {
                     if (main_debugger_var) printf("DEBUG: Found the starting paraentheses character.\n");
+                    srspaces(&line_parts);
                     printf("We have this before the first paraenthese: %s and %d\n", line_parts->array, strlen(line_parts->array));
+
                     parenth_flag = 1;
                     sclear(&line_parts, 0, 0);
                 }
@@ -129,12 +168,16 @@ int main(int argc, char * argv[], char * envp[]) {
             sclear(&line_parts, 0, 0);
 
         file_iterator++;
+        found_datatype = 0;
     }
 
     if (main_debugger_var) printf("DEBUG: The number of lines within the file is: %d\n", file_iterator);
 
     // Clean up the system.
-    fclose (source_fp);
+    fclose(source_fp);
+    sfree(&line_parts);
+    free(line_parts);
+    vec_cleanup(&env_path);
     free(source_file_location);
 
     return 0;

@@ -156,6 +156,25 @@ int sclear(string ** array, int number_of_columns, int col_incrementation) {
     return 0;
 }
 
+int srspaces(string ** array) {
+    
+    int temp_iterator = 0;
+    int size = strlen((*array)->array) - (*array)->number_of_spaces + 1;
+    char * copy = calloc(size, sizeof(char));
+
+    for (int i = 0; i < strlen((*array)->array); ++i) {
+        if ((*array)->array[i] != 32) {
+            copy[temp_iterator] = (*array)->array[i];
+            temp_iterator++;
+        }
+    }
+    memset((*array)->array, 0, sizeof((*array)->array));
+    strcpy((*array)->array, copy);
+    free(copy);
+
+    return 0;
+}
+
 int sfree(string ** array) {
 
 	if (string_debugger_flag) printf("Entering the sfree function.\n");

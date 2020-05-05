@@ -22,6 +22,8 @@ int sadd(string ** array, const char * format, ...);
 
 int sclear(string ** array, int number_of_columns, int col_incrementation);
 
+int srspaces(string ** array);
+
 int sfree(string ** array);
 
 void string_debugger();

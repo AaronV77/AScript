@@ -9,10 +9,15 @@
     "float" var3 = 0.12345;
     "double" var4 = 0.123456789;
     "string" var5 = "Hello Mom~!";
-
-    echo("Look at this: $Here");
+    "string" var6 = "I can't believe that this is working correctly..";
+    "string" var7 = "Yippie! ";
+    "string" var8 = "Whoohoo!";
+    
+    echo("Look at this: $var and this penguin.");
     echo("Hello Aaron from AScript");
-    echo("Here is an $example with no period ");
-    echo("Stacy's age is: $age and she is a female.");
+    echo("Here is a float: $var3 ");
+    echo("A message from Aaron: $var5 .");
+    echo($var6);
+    echo($var7, $var8);
 
 }

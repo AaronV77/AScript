@@ -132,7 +132,8 @@ Commands:
     - Is support any shell command that is available on the system. 
     - If a command that is found is not avaiable on the system, raise a runtime error.
     - Anything that comes after the command is considered input to the command.
-    - Any shell command will have similar syntax to C funcitons. 
+    - Any shell command will have similar syntax to C funcitons.
+    - Any variable to be replaced in strings that start with $, should only be in in comments. 
 
     //AScript 
     echo(Devin is $var years old.)
@@ -162,3 +163,4 @@ Other Syntax:
       This syntax will also be used in commenting and allow the system to be both single and multiple lines. If I were 
       to do the C sytnax for cmments then I would have to support two different types of mechanims and I don't want to do that now.
     - For comments lets keep it with the "//" C syntax. 
+    - Any variable to be replaced in strings that start with $, should only be in in comments. 

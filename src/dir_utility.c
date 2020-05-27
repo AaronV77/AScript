@@ -6,7 +6,7 @@ int is_dir(char * path) {
 
     if (du_debugger_flag) printf("Entering is_dir function.\n");
 
-	struct stat fileStruct;
+	struct stat fileStruct = {0};
 	lstat(path, &fileStruct);
 	if ((fileStruct.st_mode & S_IFMT) == S_IFDIR) {
         if (du_debugger_flag) printf("Leaving is_dir function.\n");
@@ -22,7 +22,7 @@ int is_file(char * path) {
 
     if (du_debugger_flag) printf("Entering is_file function.\n");
 	
-    struct stat fileStruct;
+    struct stat fileStruct = {0};
 	lstat(path, &fileStruct);
 	if (((fileStruct.st_mode & S_IFMT) == S_IFLNK) ||
         ((fileStruct.st_mode & S_IFMT) == S_IFREG) ||

@@ -1,4 +1,4 @@
-#include "string.h"
+#include "astring.h"
 
 int string_debugger_flag = 0;
 
@@ -28,8 +28,7 @@ int column_reallocation(string ** array, int new_col_size) {
         printf("ERROR: There was an issue with the reallocation of your pointer.\n");
         free((char*)(*array)->array);
         return 1;
-    }	
-
+    }
     memset((*array)->array, 0, new_col_size * sizeof(char));
     strcpy((*array)->array, copy);
     free(copy);
@@ -86,16 +85,6 @@ int sadd(string ** array, const char * format, ...) {
         char * string2 = calloc(strlen(string) + 1, sizeof(char));
         strncpy(string2, string, strlen(string));
         vptr = string2;
-    } else if (!strcmp(format, "double") || !strcmp(format, "float")) {
-        double var2 = va_arg(arguments, double);
-        double * var = calloc(1, sizeof(double));
-        var[0] = var2; 
-        vptr = var;
-    } else if (!strcmp(format, "int")) {
-        int var2 = va_arg(arguments, int);
-        int * var = calloc(1, sizeof(int));
-        var[0] = var2; 
-        vptr = var;
  	} else {
 		printf("ERROR: The given data type is not supported...\n");
 		if (string_debugger_flag) printf("Leaving the sadd funtion.\n");
@@ -146,7 +135,7 @@ int sclear(string ** array, int number_of_columns, int col_incrementation) {
             return 1;
         }
     }
-    memset((*array)->array, 0, sizeof((*array)->array));
+    memset((*array)->array, 0, (*array)->total_num_cols * sizeof(char));
     
     (*array)->current_num_col = 0;
     (*array)->number_of_spaces = 0;
@@ -156,21 +145,25 @@ int sclear(string ** array, int number_of_columns, int col_incrementation) {
     return 0;
 }
 
-int srspaces(string ** array) {
-    
-    int temp_iterator = 0;
-    int size = strlen((*array)->array) - (*array)->number_of_spaces + 1;
-    char * copy = calloc(size, sizeof(char));
+int sremove(string ** array, char * remove_characters) {
 
-    for (int i = 0; i < strlen((*array)->array); ++i) {
-        if ((*array)->array[i] != 32) {
-            copy[temp_iterator] = (*array)->array[i];
-            temp_iterator++;
+    int temp_iterator = 0, add_flag = 0, number_of_characters = strlen(remove_characters);
+    char * ptr = calloc((*array)->total_num_cols, sizeof(char));
+    for (int i = 0; i < (*array)->current_num_col; ++i) {
+        for (int j = 0; j < number_of_characters; ++j) {
+            if ((*array)->array[i] == remove_characters[j])
+                add_flag = 1;
         }
+        if (add_flag == 0) {
+            ptr[temp_iterator] = (*array)->array[i];
+            temp_iterator++;
+        } else 
+            add_flag = 0;
     }
-    memset((*array)->array, 0, sizeof((*array)->array));
-    strcpy((*array)->array, copy);
-    free(copy);
+
+    sclear(array, 0, 0);
+    sadd(array, "string", ptr);
+    free(ptr);
 
     return 0;
 }

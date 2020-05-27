@@ -151,18 +151,22 @@ void vec_push(Linked_List ** list, int array_size, const char * format, ...) {
 void vec_cleanup(Linked_List ** list) {
     if (sm_debugger_flag) printf("Entering the vec_cleanup function\n");
 
-    int iterator = 0;
-    Linked_List_Node * temp;
-    while ((*list)->front) {
-        temp = (*list)->front->next;
-        free((*list)->front->list_item);
-        free((*list)->front->format);
-        free((*list)->front);
-        (*list)->front = temp;
-        iterator++;
+    if ((*list)) {
+        if ((*list)->list_length > 0) {
+            int iterator = 0;
+            Linked_List_Node * temp;
+            while ((*list)->front) {
+                temp = (*list)->front->next;
+                free((*list)->front->list_item);
+                free((*list)->front->format);
+                free((*list)->front);
+                (*list)->front = temp;
+                iterator++;
+            }
+            free(*list);
+        }
     }
-    free(*list);
-
+    
     if (sm_debugger_flag) printf("Leaving the vec_cleanup function\n");
     return;
 }

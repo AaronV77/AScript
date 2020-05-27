@@ -1,5 +1,5 @@
-#ifndef POINTER_MANAGEMENT
-#define POINTER_MANAGEMENT
+#ifndef ASTRING
+#define ASTRING
 
 #include <stdlib.h> // calloc(), realloc()
 #include <stdarg.h> // va_list(), va_start(), va_end(), va_arg()
@@ -22,7 +22,7 @@ int sadd(string ** array, const char * format, ...);
 
 int sclear(string ** array, int number_of_columns, int col_incrementation);
 
-int srspaces(string ** array);
+int sremove(string ** array, char * remove_characters);
 
 int sfree(string ** array);
 

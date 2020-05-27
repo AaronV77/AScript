@@ -63,10 +63,11 @@ void func_var_push(Func_Var_List ** list, char * item_name, char * datatype, cha
     Func_Var_List_Node * temp = calloc(1, sizeof(Func_Var_List_Node));
 
     temp->name = calloc(strlen(item_name) + 1, sizeof(char));
-    temp->datatype = calloc(strlen(item_name) + 1, sizeof(char));
+    temp->datatype = calloc(strlen(datatype) + 1, sizeof(char));
+    temp->file_location = calloc(strlen(file_location) + 1, sizeof(char));
+
     strcpy(temp->name, item_name);
     strcpy(temp->datatype, datatype);
-    temp->file_location = calloc(strlen(file_location) + 1, sizeof(char));
     strcpy(temp->file_location, file_location);
     temp->function_line_number = function_line_number;
     temp->next = NULL;
@@ -78,7 +79,6 @@ void func_var_push(Func_Var_List ** list, char * item_name, char * datatype, cha
 
     if (!*list) {
         *list = calloc(1, sizeof(Func_Var_List));
-
         (*list)->front = (*list)->rear = temp;
     } else {
         (*list)->rear->next = temp;
@@ -97,6 +97,7 @@ void func_var_argument_push(Func_Var_List ** list, char * item_name, char * argu
     Func_Var_List_Node * temp = (*list)->front;
     while (temp) {
         if (!strcmp(temp->name, item_name)) {
+            printf("Adding value: %s\n", argument);
             td_push(&temp->arguments, "char", &argument);
             temp->number_of_arguments++;
         }
@@ -108,22 +109,23 @@ void func_var_argument_push(Func_Var_List ** list, char * item_name, char * argu
     return;
 }
 
-int func_var_search(Func_Var_List * list, char * item_name) {
+Func_Var_List_Node * func_var_search(Func_Var_List * list, char * item_name) {
 
     if (func_var_debugger_flag) printf("Entering the func_var_search function\n");
 
     if (list) {
         Func_Var_List_Node * temp = list->front;
         while (temp) {
-            if (!strcmp(temp->name, item_name))
-                return 0;
+            if (!strcmp(temp->name, item_name)) {
+                return temp;
+            }
             temp = temp->next;
         }
     }
 
     if (func_var_debugger_flag) printf("Leaving the func_var_search function\n");
 
-    return 1;
+    return NULL;
 }
 
 void func_var_cleanup(Func_Var_List ** list) {
@@ -135,6 +137,7 @@ void func_var_cleanup(Func_Var_List ** list) {
             temp = (*list)->front->next;
             free((*list)->front->name);
             free((*list)->front->datatype);
+            free((*list)->front->file_location);
             td_free(&((*list)->front->arguments));
 	        free((*list)->front->arguments);
             free((*list)->front);

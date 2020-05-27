@@ -1,19 +1,16 @@
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 To Do:
-- Search for the main function while keeping track of where function declarations are.
-- Allow arguments in functions and commands to be variables.
-- Allow single arguments in functions and commands be variables.
-- Adjust the placeholder in arguments and comments with variables.
 - Process single if statments.
 - Process single if else statments.
 - Process else statments.
+- Support array variables.
 - Create For Loops.
 - Create While Loops.
-- Support array variables.
 - Process Return statments.
 - Have other functions be able to be called.
-- Handle functions with return types / values. 
+- Handle functions with return types / values.
+- Search for the main function while keeping track of where function declarations are.
 - Make it so variables that are declared in if statments and other functions are not able to be used outside of their scope.
 - Figure out how to check that the data for variables is accurate for declared datatype.
 
@@ -31,6 +28,7 @@ Efficiency Tweaks:
 
 In-Progress:
 
+
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 Done:
@@ -44,5 +42,8 @@ Done:
 - Figure out how to process variables. 
 - Parse variables and added string datatype.
 - Make sure that you can have a void datatype for a function but not a variable.
+- Allow arguments in functions and commands to be variables.
+- Allow single arguments in functions and commands be variables.
+- Adjust the placeholder in arguments and comments with variables.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------

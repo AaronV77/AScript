@@ -169,7 +169,15 @@ int main(int argc, char * argv[], char * envp[]) {
                     // Check to see if we are done grabbing a replacement variable, if so then turn off the grabber. 
                     if (found_replacing_var) {
                         found_replacing_var = 0;
-                        sadd(&line_parts, "string", "<PLACEHOLDER> ");
+                        Func_Var_List_Node * temp = func_var_search(variables, replacing_variable->array);
+                        if (temp) {
+                            sadd(&line_parts, "string", ((char**)temp->arguments->array)[0]);
+                            sadd(&line_parts, "char", ' ');
+                        } else {
+                            printf("ERROR: The replacing variable: %s has not been declared.\n", replacing_variable->array);
+                            return 1;
+                        }
+                        sclear(&replacing_variable, 0, 0);
                         continue;
                     }
 
@@ -177,7 +185,8 @@ int main(int argc, char * argv[], char * envp[]) {
                         // This is where we grab the variable name from a given line.
                         if (source_file_line[i + 1] == '=') {
                             if (strcmp(found_datatype_storage, "void")) {
-                                if (func_var_search(variables, line_parts->array)) {
+                                // NULL here is a good thing, it signifies that there is not another variable with the given name.
+                                if (!func_var_search(variables, line_parts->array)) {
                                     printf("Found a variable name: %s\n", line_parts->array);
                                     func_var_push(&variables, line_parts->array, found_datatype_storage, "NONE", 0);
                                     strcpy(found_variable_name_storage, line_parts->array);
@@ -209,7 +218,14 @@ int main(int argc, char * argv[], char * envp[]) {
                         // Check to see if the found replacing var is on and if so turn it off since we have reached the end of a comment.
                         if (found_replacing_var) {
                             found_replacing_var = 0;
-                            sadd(&line_parts, "string", "<PLACEHOLDER>");
+                            Func_Var_List_Node * temp = func_var_search(variables, replacing_variable->array);
+                            if (temp) {
+                                sadd(&line_parts, "string", ((char**)temp->arguments->array)[0]);
+                            } else {
+                                printf("ERROR: The replacing variable: %s has not been declared.\n", replacing_variable->array);
+                                return 1;
+                            }
+                            sclear(&replacing_variable, 0, 0);
                             comment_flag = 0;
                             continue;
                         }
@@ -254,17 +270,31 @@ int main(int argc, char * argv[], char * envp[]) {
                 // Looking for the dollar symbol.
                 if (c == 36) {
                     found_replacing_var = 1;
+                    continue;
                 }
                 // Looking for parentheses for functions and commands.
                 if ((c == 40 || c == 41) && comment_flag == 0) {
                     if (parenth_flag) {
                         if (main_debugger_var) printf("DEBUG: Found the ending paraentheses character.\n");
                         if (found_command || found_old_function) {
+                            
+                            if (found_replacing_var) {
+                                found_replacing_var = 0;
+                                Func_Var_List_Node * temp = func_var_search(variables, replacing_variable->array);
+                                if (temp) {
+                                    sadd(&line_parts, "string", ((char**)temp->arguments->array)[0]);
+                                } else {
+                                    printf("ERROR: The replacing variable: %s has not been declared.\n", replacing_variable->array);
+                                    return 1;
+                                }
+                                sclear(&replacing_variable, 0, 0);
+                            }
 
                             if (strlen(line_parts->array) > 0) {
                                 func_var_argument_push(&com_and_func_arguments, found_comm_and_func_name_storage, line_parts->array);
                             } else
                                 func_var_argument_push(&com_and_func_arguments, found_comm_and_func_name_storage, "NONE");
+
 
                             printf("Here is the command or function: %s\n", com_and_func_arguments->front->name);
                             printf("Name: %s\n", com_and_func_arguments->front->datatype);
@@ -273,6 +303,10 @@ int main(int argc, char * argv[], char * envp[]) {
                                 printf("Argument-%d: %s\n", i, ((char**)com_and_func_arguments->front->arguments->array)[i]);
 
                         } else if (found_function_declaration) {
+                           if (found_replacing_var) {
+                                printf("ERROR: You cannot have a variable in a function declaration.\n");
+                                return 1;
+                            } 
 
                             if (strlen(found_datatype_storage) > 0) {
                                 func_var_argument_push(&function_arguments, found_function_declaration_name_storage, found_datatype_storage);
@@ -319,7 +353,6 @@ int main(int argc, char * argv[], char * envp[]) {
                                     strcpy(found_function_declaration_name_storage, line_parts->array);
                                 else
                                     printf("ERROR: The command name given, is too large for my buffer. \n"); 
-                            
                             } else {
                                 found_old_function = 1;
                                 func_var_push(&com_and_func_arguments, line_parts->array, "NONE", "NONE", 0);
@@ -337,9 +370,21 @@ int main(int argc, char * argv[], char * envp[]) {
                 // Looking for a comma for functions and commands.
                 if (c == 44) {
                     // A comma can only be found in between to paraentheses. 
-                    if (strlen(line_parts->array) && parenth_flag) {
+                    if ((strlen(line_parts->array) || strlen(replacing_variable->array)) && parenth_flag) {
                         // Commands and functions that are being called should enter the following section
                         if (found_command || found_old_function) {
+                            if (replacing_variable) {
+                                found_replacing_var = 0;
+                                Func_Var_List_Node * temp = func_var_search(variables, replacing_variable->array);
+                                if (temp) {
+                                    sadd(&line_parts, "string", ((char**)temp->arguments->array)[0]);
+                                } else {
+                                    printf("ERROR: The replacing variable: %s has not been declared.\n", replacing_variable->array);
+                                    return 1;
+                                }
+                                sclear(&replacing_variable, 0, 0);
+                            }
+
                             // If there is a random comma found then error out, or add.
                             if (com_and_func_arguments->list_length) {
                                 func_var_argument_push(&com_and_func_arguments, found_comm_and_func_name_storage, line_parts->array);
@@ -347,6 +392,11 @@ int main(int argc, char * argv[], char * envp[]) {
                                 printf("ERROR: Comma found with nothing before it.\n");
                             }
                         } else if (found_function_declaration) {
+                           if (found_replacing_var) {
+                                printf("ERROR: You cannot have a variable in a function declaration.\n");
+                                return 1;
+                            } 
+
                             if (function_arguments->list_length) {
                                 func_var_argument_push(&function_arguments, found_function_declaration_name_storage, found_datatype_storage);
                                 memset(&found_datatype_storage, 0, sizeof(found_datatype_storage));
@@ -460,6 +510,7 @@ int main(int argc, char * argv[], char * envp[]) {
     vec_cleanup(&env_path);
     if (function_arguments) func_var_cleanup(&function_arguments);
     if (com_and_func_arguments) func_var_cleanup(&com_and_func_arguments);
+    if (variables) func_var_cleanup(&variables);
     free(source_file_location);
 
     return 0;

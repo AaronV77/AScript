@@ -46,8 +46,7 @@ void setup_environment(Linked_List ** env_path, char ** envp) {
 
 string * check_available_command(Linked_List * env_path, char * command) {
     
-    string * ptr = calloc(1, sizeof(string));
-    salloc(&ptr, 50, 10);
+    string * ptr = salloc(50, 10);
 
     Linked_List_Node * current = env_path->front;
 
@@ -58,7 +57,7 @@ string * check_available_command(Linked_List * env_path, char * command) {
         if (is_file(ptr->array)) {
             return ptr;
         }
-        sclear(&ptr, 0, 0);
+        sclear(&ptr);
         current = current->next;
     }
     if (main_debugger_var) printf("DEBUG: Did not find the command on the system.\n");
@@ -145,12 +144,9 @@ int main(int argc, char * argv[], char * envp[]) {
     char datatypes[6][7] = {"char", "int", "double", "float", "string", "void"};    
 
 
-    string * line_parts = calloc(1, sizeof(string));
-    salloc(&line_parts, 50, 25);
-    string * replacing_variable = calloc(1, sizeof(string));
-    salloc(&replacing_variable, 25, 15);
-    string * temp = calloc(1, sizeof(string));
-    salloc(&temp, 25, 15);
+    string * line_parts = salloc(50, 25);
+    string * replacing_variable = salloc(25, 15);
+    string * temp = salloc(25, 15);
 
     Func_Var_List * variables = NULL;
     Func_Var_List * function_arguments = NULL; 
@@ -177,7 +173,7 @@ int main(int argc, char * argv[], char * envp[]) {
                             printf("ERROR: The replacing variable: %s has not been declared.\n", replacing_variable->array);
                             return 1;
                         }
-                        sclear(&replacing_variable, 0, 0);
+                        sclear(&replacing_variable);
                         continue;
                     }
 
@@ -190,7 +186,7 @@ int main(int argc, char * argv[], char * envp[]) {
                                     printf("Found a variable name: %s\n", line_parts->array);
                                     func_var_push(&variables, line_parts->array, found_datatype_storage, "NONE", 0);
                                     strcpy(found_variable_name_storage, line_parts->array);
-                                    sclear(&line_parts, 0, 0);
+                                    sclear(&line_parts);
                                     memset(found_datatype_storage, 0, sizeof(found_datatype_storage));
                                     found_variable = 1;
                                     found_datatype = 0;
@@ -225,7 +221,7 @@ int main(int argc, char * argv[], char * envp[]) {
                                 printf("ERROR: The replacing variable: %s has not been declared.\n", replacing_variable->array);
                                 return 1;
                             }
-                            sclear(&replacing_variable, 0, 0);
+                            sclear(&replacing_variable);
                             comment_flag = 0;
                             continue;
                         }
@@ -236,7 +232,8 @@ int main(int argc, char * argv[], char * envp[]) {
                         }
                         
                         // Check to see if the incoming string is a datatype.
-                        if (line_parts->number_of_spaces == 0 && (
+                        int number_of_spaces = soccurences(line_parts, ' ');
+                        if (number_of_spaces == 0 && (
                             line_parts->array[0] == 'c' ||
                             line_parts->array[0] == 'd' ||
                             line_parts->array[0] == 'f' ||
@@ -258,12 +255,12 @@ int main(int argc, char * argv[], char * envp[]) {
                         // If the commented section is not a datatype then ignore and move on. 
                         // Reset the string either way 
                         if (!parenth_flag)
-                            sclear(&line_parts, 0, 0);
+                            sclear(&line_parts);
                         comment_flag = 0;
                     } else {
                         if (main_debugger_var) printf("DEBUG: Found the starting comment character.\n");
                         comment_flag = 1;
-                        sclear(&line_parts, 0, 0);
+                        sclear(&line_parts);
                     }
                     continue;
                 }            
@@ -287,7 +284,7 @@ int main(int argc, char * argv[], char * envp[]) {
                                     printf("ERROR: The replacing variable: %s has not been declared.\n", replacing_variable->array);
                                     return 1;
                                 }
-                                sclear(&replacing_variable, 0, 0);
+                                sclear(&replacing_variable);
                             }
 
                             if (strlen(line_parts->array) > 0) {
@@ -324,7 +321,7 @@ int main(int argc, char * argv[], char * envp[]) {
                                 printf("Argument-%d: %s\n", i, ((char**)function_arguments->front->arguments->array)[i]);
                         }
 
-                        sclear(&line_parts, 0, 0);
+                        sclear(&line_parts);
                         parenth_flag = 0;
                     } else {
                         if (main_debugger_var) printf("DEBUG: Found the starting paraentheses character.\n");
@@ -362,8 +359,7 @@ int main(int argc, char * argv[], char * envp[]) {
                         }
                         parenth_flag = 1;
                         sfree(&temp);
-                        free(temp);
-                        sclear(&line_parts, 0, 0);
+                        sclear(&line_parts);
                     }
                     continue;
                 }            
@@ -382,7 +378,7 @@ int main(int argc, char * argv[], char * envp[]) {
                                     printf("ERROR: The replacing variable: %s has not been declared.\n", replacing_variable->array);
                                     return 1;
                                 }
-                                sclear(&replacing_variable, 0, 0);
+                                sclear(&replacing_variable);
                             }
 
                             // If there is a random comma found then error out, or add.
@@ -406,7 +402,7 @@ int main(int argc, char * argv[], char * envp[]) {
                                 return 1;
                             }
                         }
-                        sclear(&line_parts, 0, 0);
+                        sclear(&line_parts);
                     } else {
                         printf("ERROR: A comma was found with no context.\n");
                         return 1;
@@ -440,7 +436,7 @@ int main(int argc, char * argv[], char * envp[]) {
                         func_var_argument_push(&variables, found_variable_name_storage, line_parts->array);
                         memset(found_variable_name_storage, 0, sizeof(found_variable_name_storage));
                         found_variable = 0;
-                        sclear(&line_parts, 0, 0);
+                        sclear(&line_parts);
                     } else if (strlen(line_parts->array) > 0) {
                         printf("ERROR on line-%d: Line ended with items still being processed.\n", file_iterator);
                         printf("Here: %s and %lu\n", line_parts->array, strlen(line_parts->array));
@@ -450,9 +446,7 @@ int main(int argc, char * argv[], char * envp[]) {
                     if (exit_flag) {
                         fclose(source_fp);
                         sfree(&line_parts);
-                        free(line_parts);
                         sfree(&replacing_variable);
-                        free(replacing_variable);
                         vec_cleanup(&env_path);
                         func_var_cleanup(&function_arguments);
                         func_var_cleanup(&com_and_func_arguments);
@@ -502,11 +496,8 @@ int main(int argc, char * argv[], char * envp[]) {
     // Clean up the system.
     fclose(source_fp);
     sfree(&line_parts);
-    free(line_parts);
     sfree(&replacing_variable);
-    free(replacing_variable);
     sfree(&temp);
-    free(temp);
     vec_cleanup(&env_path);
     if (function_arguments) func_var_cleanup(&function_arguments);
     if (com_and_func_arguments) func_var_cleanup(&com_and_func_arguments);

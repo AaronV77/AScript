@@ -1,4 +1,3 @@
-[submodule "AString"]
+[submodule "src/AString"]
 	path = src/AString
 	url = https://github.com/AaronV77/AString.git
-	branch = master

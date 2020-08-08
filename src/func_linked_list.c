@@ -1,9 +1,9 @@
-#include "func_vars_list.h"
+#include "func_linked_list.h"
 
-int func_var_debugger_flag = 0;
+int func_debugger_flag = 0;
 
-void func_var_pop(Func_Var_List ** list, int position) {
-    if (func_var_debugger_flag) printf("Entering the func_var_pop function\n");
+void func_ll_pop(Func_Linked_List ** list, int position) {
+    if (func_debugger_flag) printf("Entering the func_var_pop function\n");
 
     if (position > ((*list)->list_length - 1) || position < 0) {
         printf("ERROR: The position given is either greater than the list size or smaller than zero.\n");
@@ -11,11 +11,10 @@ void func_var_pop(Func_Var_List ** list, int position) {
     }
 
     int list_iterator = 0;
-    Func_Var_List_Node * past;
-    Func_Var_List_Node * current = (*list)->front;
+    Func_Linked_List_Node * past;
+    Func_Linked_List_Node * current = (*list)->front;
 
     while (current) {
-        
         if (list_iterator == position) {
             if (list_iterator == 0) {
                 // Remove the leading node.
@@ -53,14 +52,14 @@ void func_var_pop(Func_Var_List ** list, int position) {
         list_iterator++;
     }
 
-    if (func_var_debugger_flag) printf("Leaving the func_var_pop function\n");
+    if (func_debugger_flag) printf("Leaving the func_var_pop function\n");
     return;
 }
 
-void func_var_push(Func_Var_List ** list, char * item_name, char * datatype, char * file_location, int function_line_number) {
-    if (func_var_debugger_flag) printf("Entering the func_var_push function\n");
+void func_ll_push(Func_Linked_List ** list, char * item_name, char * datatype, char * file_location, int function_line_number) {
+    if (func_debugger_flag) printf("Entering the func_var_push function\n");
 
-    Func_Var_List_Node * temp = calloc(1, sizeof(Func_Var_List_Node));
+    Func_Linked_List_Node * temp = calloc(1, sizeof(Func_Linked_List_Node));
 
     temp->name = calloc(strlen(item_name) + 1, sizeof(char));
     temp->datatype = calloc(strlen(datatype) + 1, sizeof(char));
@@ -78,7 +77,7 @@ void func_var_push(Func_Var_List ** list, char * item_name, char * datatype, cha
     td_allocation(&temp->arguments, "char", 5, 5, 0);
 
     if (!*list) {
-        *list = calloc(1, sizeof(Func_Var_List));
+        *list = calloc(1, sizeof(Func_Linked_List));
         (*list)->front = (*list)->rear = temp;
     } else {
         (*list)->rear->next = temp;
@@ -86,35 +85,34 @@ void func_var_push(Func_Var_List ** list, char * item_name, char * datatype, cha
     }
     (*list)->list_length++;
 
-    if (func_var_debugger_flag) printf("Leaving the func_var_push function\n");
+    if (func_debugger_flag) printf("Leaving the func_var_push function\n");
     return;
 }
 
-void func_var_argument_push(Func_Var_List ** list, char * item_name, char * argument) {
+void func_ll_argument_push(Func_Linked_List ** list, char * item_name, char * argument) {
     
-    if (func_var_debugger_flag) printf("Entering the func_var_argument_push function\n");
+    if (func_debugger_flag) printf("Entering the func_var_argument_push function\n");
 
-    Func_Var_List_Node * temp = (*list)->front;
+    Func_Linked_List_Node * temp = (*list)->front;
     while (temp) {
         if (!strcmp(temp->name, item_name)) {
-            printf("Adding value: %s\n", argument);
             td_push(&temp->arguments, "char", &argument);
             temp->number_of_arguments++;
         }
         temp = temp->next;
     }
 
-    if (func_var_debugger_flag) printf("Leaving the func_var_argument_push function\n");
+    if (func_debugger_flag) printf("Leaving the func_var_argument_push function\n");
     
     return;
 }
 
-Func_Var_List_Node * func_var_search(Func_Var_List * list, char * item_name) {
+Func_Linked_List_Node * func_ll_search(Func_Linked_List * list, char * item_name) {
 
-    if (func_var_debugger_flag) printf("Entering the func_var_search function\n");
+    if (func_debugger_flag) printf("Entering the func_var_search function\n");
 
     if (list) {
-        Func_Var_List_Node * temp = list->front;
+        Func_Linked_List_Node * temp = list->front;
         while (temp) {
             if (!strcmp(temp->name, item_name)) {
                 return temp;
@@ -123,16 +121,16 @@ Func_Var_List_Node * func_var_search(Func_Var_List * list, char * item_name) {
         }
     }
 
-    if (func_var_debugger_flag) printf("Leaving the func_var_search function\n");
+    if (func_debugger_flag) printf("Leaving the func_var_search function\n");
 
     return NULL;
 }
 
-void func_var_cleanup(Func_Var_List ** list) {
-    if (func_var_debugger_flag) printf("Entering the func_var_cleanup function\n");
+void func_ll_cleanup(Func_Linked_List ** list) {
+    if (func_debugger_flag) printf("Entering the func_var_cleanup function\n");
 
     if ((*list)->list_length > 0) {
-        Func_Var_List_Node * temp;
+        Func_Linked_List_Node * temp;
         while ((*list)->front) {
             temp = (*list)->front->next;
             free((*list)->front->name);
@@ -146,11 +144,11 @@ void func_var_cleanup(Func_Var_List ** list) {
         free(*list);
     }
     
-    if (func_var_debugger_flag) printf("Leaving the func_var_cleanup function\n");
+    if (func_debugger_flag) printf("Leaving the func_var_cleanup function\n");
     return;
 }
 
-void func_var_debugger() {
-    func_var_debugger_flag = 1;
+void func_ll_debugger() {
+    func_debugger_flag = 1;
     return;
 }

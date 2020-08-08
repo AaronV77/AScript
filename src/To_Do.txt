@@ -1,6 +1,9 @@
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 To Do:
+- Allow arithmitec for variables.
+- Allow to update a variable.
+
 - Process single if statments.
 - Process single if else statments.
 - Process else statments.
@@ -27,7 +30,8 @@ Efficiency Tweaks:
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 In-Progress:
-
+- Update Comments
+- Cleanup debug statments
 
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -40,10 +44,12 @@ Done:
 - Save the file / line number of where a function declaration is.
 - Allow commands to be ran and use the underlying datastructure for it.
 - Figure out how to process variables. 
+- Update data structures for variables, functions, and environment.
 - Parse variables and added string datatype.
 - Make sure that you can have a void datatype for a function but not a variable.
 - Allow arguments in functions and commands to be variables.
 - Allow single arguments in functions and commands be variables.
 - Adjust the placeholder in arguments and comments with variables.
+- Get a working calculator example.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------

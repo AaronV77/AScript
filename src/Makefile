@@ -1,15 +1,15 @@
-
 all: astring_lib main
 
 astring_lib:
 	$(MAKE) -C AString/src archive
 
 main:
-	gcc -c dir_utility.c
-	gcc -c linked_list.c
-	gcc -c td_array.c
-	gcc -c func_vars_list.c	
-	gcc main.c dir_utility.o linked_list.o td_array.o func_vars_list.o -IAString/src/ AString/src/astring.a -o main
+	gcc -c dir_utility.c -g
+	gcc -c env_linked_list.c -g 
+	gcc -c td_array.c -g 
+	gcc -c var_linked_list.c -g 
+	gcc -c func_linked_list.c -g
+	gcc main.c dir_utility.o env_linked_list.o td_array.o var_linked_list.o func_linked_list.o -IAString/src/ AString/src/astring.a -o main -g3
 
 run:
 	./main example_template.a

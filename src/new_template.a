@@ -1,0 +1,14 @@
+
+"This is an example of a comment"
+"This also is an example of 
+a comment."
+
+int var = 0;
+char var2 = 'c';
+float var3 = 0.12345;
+double var4 = 0.123456789 + 10;
+string var5 = "Aaron";
+string var6 = "$var5 Anthony ";
+
+var = 1+2*3;
+var6 = var6 + "Valoroso";

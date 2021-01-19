@@ -1,0 +1,46 @@
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+To Do:
+- Update function linked list to use AString.
+- Update variable linked list to use Astring.
+- Fix the main debugger to turn on all debugging statements.
+- Be able to process an if statment.
+- Be able to clear all new variables that have been declared within the if statement.
+- Be able to process else if statements.
+- Be able to process else statements.
+- Be able to have all if, else if, and else statements that are one liners.
+
+- Figure out how curly braces are going to work for functions, if statements, and loops.
+    - Use an iterator when things between between curly braces when lines need to be ignored.
+    - Use an iterator for functions since there can not any functions within each other.
+    - Loops and if statments can be nested:
+        - Think if statments and loops should be individual functions that can be recursive.
+
+Finishing Touches:
+- Unit Testing
+- Debug statments
+- Error Handling / Output
+- Code Comments
+
+Efficiency Tweaks:
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+In-Progress:
+- Update Comments
+- Cleanup debug statments
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Done:
+
+- Write comments 9/11
+- Write debugging statments. 9/11
+
+- Be able to accept new variables.
+- Be able to process code comments.
+- Be able to accept all variables data types.
+- Be able to update variables with new values.
+- Be able to differienate a char with single quotes and a string with double quotes.
+- Be able to replace comments in function and strings that have variables with their correct values.
+-----------------------------------------------------------------------------------------------------------------------------------------------

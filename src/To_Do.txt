@@ -3,7 +3,7 @@
 To Do:
 - Allow arithmitec for variables.
 - Allow to update a variable.
-
+- Make it so that commands and functions being ran are ran from the inside out. So recursively go through the linked list making all the calls in a way. 
 - Process single if statments.
 - Process single if else statments.
 - Process else statments.
@@ -50,6 +50,8 @@ Done:
 - Allow arguments in functions and commands to be variables.
 - Allow single arguments in functions and commands be variables.
 - Adjust the placeholder in arguments and comments with variables.
-- Get a working calculator example.
+- Create a calculator algorithm that can accomodate the five operators (+,-,/,*,^) and parentheses.
+- Create an algoirthm that can process comparison operators (>,<,=) and logic statements (and, or).
+- Create an aglorithm that can include both the calculator and if comparison.
 
 -----------------------------------------------------------------------------------------------------------------------------------------------

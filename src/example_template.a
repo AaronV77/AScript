@@ -4,14 +4,14 @@
     "This also is an example of 
     a comment."
 
-    "int" var = 0;
-    "char" var2 = "c";
-    "float" var3 = 0.12345;
-    "double" var4 = 0.123456789;
-    "string" var5 = "Hello Mom~!";
-    "string" var6 = "I can't believe that this is working correctly..";
-    "string" var7 = "Yippie! ";
-    "string" var8 = "Whoohoo!";
+    int var = 0;
+    char var2 = "c";
+    float var3 = 0.12345;
+    double var4 = 0.123456789;
+    string var5 = "Hello Mom~!";
+    string var6 = "I can't believe that this is working correctly..";
+    string var7 = "Yippie! ";
+    string var8 = "Whoohoo!";
     
     echo("Look at this: $var and this penguin.");
     echo("Hello Aaron from AScript");

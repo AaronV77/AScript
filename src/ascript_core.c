@@ -69,8 +69,6 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
         }
 
         char character;                             // Used to store the character being processed.
-
-// ** As of right now there is no other operator for string, other than addition. This can probably be removed.
         char operator = '\0';                       // Used to store the addition operator if found.
 
         int comment_flag = 0;                       // Used to turn on and off the parsing mechanism when quotes are found.
@@ -128,10 +126,13 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
                             printf("ERROR: There was no variable found with that given name: %s\n", variable_found->array);
                             sclear(&left_value);
                             sclear(&right_value);
+                            sclear(&variable_found);
                             break;
                         }
                         // Reset the variable found flag.
                         variable_found_flag = 0;
+                        sclear(&variable_found);
+
                         // Only add the space character if the comment flag is on.
                         if (!comment_flag)
                             continue;
@@ -151,9 +152,14 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
                      if (ascript_core_debugger_var) printf("DEBUG: Found the addition operator.\n");
                     // Set / save the operator character.
                     operator = 43;
-// BUG                    
-                    // Switch the capture flag to store the opposite side.
-                    left_value_capture_flag = 1;
+
+                    // Switch the capture flag to whatever buffer is empty
+                    if (left_value_capture_flag) {
+                        left_value_capture_flag = 0;
+                    } else {
+                        left_value_capture_flag = 1;
+                    }
+                    
                     // Don't add the operator to the string.
                     continue;
                 // Anything else that is found is considered a variable.
@@ -189,13 +195,20 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
                 sadd(&variable_found, "char", character);
         }
 
-// ** Need to check to see why this is here....
+        // Check to see if the variable found was the only thing left on the right hand side of the equal sign.
         if (!left_value->current_num_col && variable_found->current_num_col) {
             sadd(&left_value, "string", variable_found->array);
+            sclear(&variable_found);
         }
 
+        // Fill the left side if there is anything in the right buffer still. 
+        if (left_value->current_num_col && right_value->current_num_col) {
+            sadd(&left_value, "string", right_value->array);
+            sclear(&right_value);
+        }
         // Clear the incoming line for the new data value.
         sclear(&incoming_line);
+
         // Check to see if the left buffer is emtpy
         if (left_value->current_num_col) {
             if (ascript_core_debugger_var) printf("DEBUG: The value for the incoming variable is: %s\n", left_value->array);

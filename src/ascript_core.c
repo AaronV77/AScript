@@ -42,17 +42,15 @@ void setup_core_environment(Env_Linked_List * env_path) {
 
 void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * functions, string * data_type, string * incoming_line) {
 
-    // Check to see if the incoming variable data line has any quotes within it. If there are quotes avaialbe,
+    // Check to see if the incoming variable data line has any quotes within it. If there are quotes available,
     // - then there is a good chance that the line is going to contain a new variable or updating a previous
     // - variable value.
     if (soccurences(incoming_line, '"') || soccurences(incoming_line, '\'')) {
         
-        // Remove the semicolon at the end of the line.
-        if (soccurences(incoming_line, ';')) {
-            // Since AScript should only have one purpose per line, remove everything after the semicolon.
-            strunc(&incoming_line, 0, ';');
-        // All lines in AScript cannot wrap around.
-        } else {
+        // Check to see if the incoming line has a semicolon at the "end" of the line.
+        // There could be a simple check to see if the last character is a semicolon, but spaces and special characters have to be taken into account.
+        if (strunc(&incoming_line, 0, ';')) {
+            // All lines in AScript cannot wrap around.
             printf("ERROR: There is no semicolon in the passed in line for the variable declaration.\n");
             sclear(&incoming_line);
             return;
@@ -60,8 +58,8 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
 
         // Check to see if the incoming variable line has a data type.
         if (data_type->current_num_col) {
-            // Check to see if the incoming variable data type is not of type string. Any variables that should
-            // - be in this section should be of type string.
+            // Check to see if the incoming variable data type is not of type string. 
+            // Any variables that should be in this section should be of type string.
             if (strcmp(data_type->array, "string") && strcmp(data_type->array, "char")) {
                 // Error out.
                 printf("ERROR: The value for the assigned variable has quotes but is of not type char or string.\n");
@@ -71,13 +69,15 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
         }
 
         char character;                             // Used to store the character being processed.
+
+// ** As of right now there is no other operator for string, other than addition. This can probably be removed.
         char operator = '\0';                       // Used to store the addition operator if found.
 
         int comment_flag = 0;                       // Used to turn on and off the parsing mechanism when quotes are found.
         int variable_found_flag = 0;                // Used to turn on and off the parsing mechanism when both quotes and a variable have been found.
         int  left_value_capture_flag = 1;           // Used to turn on and off which char buffer to store values into.
 
-        string * variable_found = salloc(10, 5);    // Used to store the variavble if found in either a quoted section or by itself.
+        string * variable_found = salloc(10, 5);    // Used to store the variable if found in either a quoted section or by itself.
         string * left_value = salloc(10, 5);        // Used to store values on the left hand side of operators.
         string * right_value = salloc(10, 5);       // Used to store values on the right hand side of operators.
 
@@ -88,7 +88,7 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
 
             // Check to see if the comment flag is turned off or if a variable has been found.
             if (!comment_flag || variable_found_flag) {
-                // If the grabbed character is a string.
+                // If the grabbed character is a space.
                 if (character == 32) {
                     // If a variable has been found.
                     if (variable_found_flag) {
@@ -151,6 +151,7 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
                      if (ascript_core_debugger_var) printf("DEBUG: Found the addition operator.\n");
                     // Set / save the operator character.
                     operator = 43;
+// BUG                    
                     // Switch the capture flag to store the opposite side.
                     left_value_capture_flag = 1;
                     // Don't add the operator to the string.
@@ -188,6 +189,7 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
                 sadd(&variable_found, "char", character);
         }
 
+// ** Need to check to see why this is here....
         if (!left_value->current_num_col && variable_found->current_num_col) {
             sadd(&left_value, "string", variable_found->array);
         }
@@ -200,8 +202,8 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
             sadd(&incoming_line, "string", left_value->array);
         }
 
-        // Check to see if the data type is char and if the value is greater than 1 character. No 
-        // - char data types in AScript can have a value of more than one character.
+        // Check to see if the data type is char and if the value is greater than 1 character. 
+        // No char data types in AScript can have a value of more than one character.
         if (!strcmp(data_type->array, "char") && incoming_line->current_num_col > 1) {
             printf("ERROR: The value of the char variable is greater than one character for the value.\n");
             sclear(&incoming_line);
@@ -213,7 +215,7 @@ void evaluate_variable_value(Var_Linked_List ** variables, Func_Linked_List * fu
         sfree(&right_value);
         sfree(&variable_found);
         return;
-    // Anything that doesn't have a quote in it is considered to be a number operation.
+        // Anything that doesn't have a quote in it is considered to be a number operation.
     } else {
         char character;                             // Used to store the current character being processed.
         string * temp_value = salloc(10, 5);        // Used to store the value without any variable names, only values.
@@ -399,7 +401,7 @@ int evaluate_variables(Var_Linked_List ** variables, Func_Linked_List * function
         }
     // If there are more than two tokens, error out.
     } else {
-        printf("ERROR: There are too many tiems before the equal symbol.\n");
+        printf("ERROR: There are too many items before the equal symbol.\n");
         error_was_found = 1;
     }
     
@@ -419,13 +421,14 @@ int evaluate_variables(Var_Linked_List ** variables, Func_Linked_List * function
         return 1;
     }
 
-    // Add the value of the incoming variable line to the variable value string.S
+    // Add the value of the incoming variable line to the variable value string.
     sadd(&variable_value, "string", current_line->tokens[1]);
     // Get the final value from the variable value.
     evaluate_variable_value(variables, functions, data_type, variable_value);
     if (ascript_core_debugger_var) printf("The returned value is this: %s\n", variable_value->array);
     // Check to see if the the returned string is empty.
     if (!variable_value->current_num_col) {
+        printf("ERROR: The returned value from the evaluation variable value function is empty.\n");
         // Free the strings and return.
         sfree(&data_type);
         sfree(&variable_name);

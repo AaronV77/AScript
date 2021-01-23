@@ -1,13 +1,31 @@
 -----------------------------------------------------------------------------------------------------------------------------------------------
 
 To Do:
-- Allow arithmitec for variables.
-- Allow to update a variable.
+
+    System Level:
+        - Update function linked list to use AString.
+        - Update variable linked list to use Astring.
+        - Fix the main debugger to turn on all debugging statements.
+
+    Variable:
+        - Make it possible so that number variables can be added to a string.
+        - Have a check to make sure that void is not able to be added to a string.
+        - There is a bug with string concatentation in that it won't work with more than two parameters.
+        - Stop manually updating the variable if it is not being redeclared.
+
+- Be able to process an if statment.
+- Be able to clear all new variables that have been declared within the if statement.
+- Be able to process else if statements.
+- Be able to process else statements.
+
+- Figure out how curly braces are going to work for functions, if statements, and loops.
+    - Use an iterator when things between between curly braces when lines need to be ignored.
+    - Use an iterator for functions since there can not any functions within each other.
+    - Loops and if statments can be nested:
+        - Think if statments and loops should be individual functions that can be recursive.
+
 - Make it so that commands and functions being ran are ran from the inside out. So recursively go through the linked list making all the calls in a way. 
-- Process single if statments.
-- Process single if else statments.
-- Process else statments.
-- Support array variables.
+
 - Create For Loops.
 - Create While Loops.
 - Process Return statments.
@@ -16,41 +34,40 @@ To Do:
 - Search for the main function while keeping track of where function declarations are.
 - Make it so variables that are declared in if statments and other functions are not able to be used outside of their scope.
 - Figure out how to check that the data for variables is accurate for declared datatype.
-
-Finishing Touches:
-- Unit Testing
-- Debug statments
-- Error Handling / Output
-- Code Comments
-
-Efficiency Tweaks:
-- Have the string library sfree function be able to clean the pointer memory as well. Rather than sfree(temp) then free(temp).
-- For function and command calls, create a struct just for them. Since there is ever
-
------------------------------------------------------------------------------------------------------------------------------------------------
-
-In-Progress:
-- Update Comments
-- Cleanup debug statments
-
------------------------------------------------------------------------------------------------------------------------------------------------
-
-Done:
-- Single Line Comments.
-- Double Line Comments.
+- Update data structures for environment.
+- Make sure that you can have a void datatype for a function but not a variable.
+- Allow arguments in functions and commands to be variables.
+- Allow single arguments in functions and commands be variables.
+- Adjust the placeholder in arguments and comments with variables.
 - Finding Functions Declarations.
 - Processing Functions and Command calls.
 - Save the file location of a command that is found in the datastructure.
 - Save the file / line number of where a function declaration is.
 - Allow commands to be ran and use the underlying datastructure for it.
-- Figure out how to process variables. 
-- Update data structures for variables, functions, and environment.
-- Parse variables and added string datatype.
-- Make sure that you can have a void datatype for a function but not a variable.
-- Allow arguments in functions and commands to be variables.
-- Allow single arguments in functions and commands be variables.
-- Adjust the placeholder in arguments and comments with variables.
+
+In the Far Future:
+- Be able to have all if, else if, and else statements that are one liners.
+- Support array variables.
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+Done:
+
+- Be able to accept new variables.
+- Be able to process single Line Comments.
+- Be able to process ouble Line Comments.
+- Be able to accept all variables data types.
+- Be able to update variables with new values.
+- Be able to differienate a char with single quotes and a string with double quotes.
+- Be able to replace comments in function and strings that have variables with their correct values.
+
+Variables
 - Create a calculator algorithm that can accomodate the five operators (+,-,/,*,^) and parentheses.
+- Figure out how to process variables. 
+- Update data structures for variables.
+- Parse variables and added string datatype.
+- Allow arithmitec for variables.
+- Allow to update a variable.
+
 - Create an algoirthm that can process comparison operators (>,<,=) and logic statements (and, or).
 - Create an aglorithm that can include both the calculator and if comparison.
 

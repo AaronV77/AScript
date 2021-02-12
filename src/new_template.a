@@ -15,6 +15,3 @@ string var7 = "$var5 $var6 Anthony ";
 "Examples of overwriting variables of the same datatypes"
 var = 1+2*3;
 var6 = var7 + "Valoroso";
-
-"Examples of overwriting variables of different datatypes"
-var = "Nicole" "Valoroso";

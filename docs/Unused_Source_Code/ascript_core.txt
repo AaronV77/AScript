@@ -1,0 +1,250 @@
+// string * check_available_command(Env_Linked_List * env_path, char * command) {
+    
+//     string * ptr = salloc(50, 10);
+
+//     Env_Linked_List_Node * current = env_path->front;
+
+//     while (current) {
+//         sadd(&ptr, "stringcharstring", current->path, '/', command);
+//         if (is_file(ptr->array))
+//             return ptr;
+//         sclear(&ptr);
+//         current = current->next;
+//     }
+//     if (ascript_core_debugger_var) printf("DEBUG: Did not find the command on the system.\n");
+//     return ptr;
+// }
+
+// int execute_command(char * command_file_location, char ** arguments, char ** envp) {
+    
+//     pid_t  pid;
+    
+//     pid = fork();
+//     if (pid == 0) {
+//         execve(command_file_location, arguments, envp);
+//     } else {
+//         waitpid(pid, NULL, 0);
+//     }
+
+//     return 0;
+// }
+
+// int skip_ahead_algorithm(FILE * source_fp, int curly_brace_index) {
+    
+//     if (ascript_core_debugger_var) printf("DEBUG: Skipping not so import items till we hit the good stuff.\n");
+
+//     int exit_flag = 0;
+//     int saved_curly_brace_index = curly_brace_index;
+
+//     char current_character;                         // Used to hold each character of every every line being processed so that I don't have to type this every time "incoming_line->array".
+//     char source_file_line[256];                     // Used to capture each line looped through the given AScript file.
+
+//     string * current_line = salloc(256, 10);        // Used to store and process each captured line within the AScript file.
+
+//     curly_brace_index++;
+
+//     // Looping through the passed in AScript file.
+//     while (fgets(source_file_line, sizeof(source_file_line), source_fp)) {
+
+//         sadd(&current_line, "string", source_file_line);
+//         schar_delete(&current_line, "\t\n");
+        
+//         if (current_line->current_num_col) {
+//             for (int i = 0; i < current_line->current_num_col; ++i) {
+//                 current_character = current_line->array[i];
+
+//                 if (current_character == 123) {
+//                     curly_brace_index++;
+//                 } else if (current_character == 125) {
+//                     curly_brace_index--;
+//                 } else if (saved_curly_brace_index == curly_brace_index) {
+//                     printf("Debug: Found the closing curly brace to where the good stuff is.\n");
+//                     exit_flag = 1;
+//                     break;
+//                 }
+//             }
+//         } else if (exit_flag) {
+//             break;
+//         }
+
+//         sclear(&current_line);
+//     }
+    
+//     sfree(&current_line);
+
+//     return 0;
+// }
+
+
+int evaluate_variables(Var_Linked_List ** variables, Func_Linked_List * functions, string * current_line) {
+
+    // Check to see if the passed in line is complete.
+    if (!soccurences(current_line, ';')) {
+        printf("ERROR: Variable declaration or assigning a new value, has to all be on one line.\n");
+        return 1;
+    }
+
+    int found_datatype_flag = 0;                    // Used to signal the algorithm when a data type has been found.
+    int error_was_found = 0;                        // Used to signal when the algorithm has encountered an error.
+    int updating_variable_value = 0;                // Used to signal when no data type was given and the variable value is being updated.
+
+    string * data_type = salloc(10, 5);             // Used to store the data type.
+    string * variable_name = salloc(20, 5);         // Used to store the vairable name.
+    string * variable_value = salloc(20, 5);        // Used to store the variable value.
+
+    char datatypes[5][7] = {"char", "int", "double", "float", "string"};    // Used to determine what variable data types are acceptable.
+
+    // Tokenize the string to get the data type and variable in one token and the value into another token.
+    stokenize(&current_line, '=');
+    // Save the contents of the first token to a temp string.
+    string * left_hand_side = salloc(strlen(current_line->tokens[0]) + 1, 5);
+    // Add the first token found in to the temp string.
+    sadd(&left_hand_side, "string", current_line->tokens[0]);
+    // Remove all leading and ending spaces found.
+    sremove_leading_and_trailing_spaces(&left_hand_side);
+    // Tokenize the string to get the data type and variable name separated.
+    stokenize(&left_hand_side, ' ');
+
+    // Check to see if there are not any tokens avaiable.
+    if (!left_hand_side->total_num_tokens) {
+        if (ascript_core_debugger_var) printf("DEBUG: Updating the found variable value: %s\n", left_hand_side->array);
+        // Add the first token to the variable name section.
+        sadd(&variable_name, "string", left_hand_side->array);
+        // Set the updating variable value flag, indicating that no data type was found.
+        updating_variable_value = 1;
+    // Check to see if there were two tokens found.
+    } else if (left_hand_side->total_num_tokens == 2) {
+        // Loop through the data types.
+        for (int i = 0; i < 5; ++i) {
+            // Check to see if any of the data types match the one passed in.
+            if (!strcmp(left_hand_side->tokens[0], datatypes[i])) {
+                if (ascript_core_debugger_var) printf("Found a datatype: %s\n", left_hand_side->tokens[0]);
+                // Set the found data type flag if one was found.
+                found_datatype_flag = 1;
+                break;
+            }
+        }
+
+        // Check to see if a data type was found.
+        if (found_datatype_flag) {
+            // Add the data type to the string.
+            sadd(&data_type, "string", left_hand_side->tokens[0]);
+            // Add the variable name to the string.
+            sadd(&variable_name, "string", left_hand_side->tokens[1]);
+        // If no data types matched the passed in string, error out.
+        } else {
+            printf("ERROR: The given data type given for the variable is not familiar.\n");
+            error_was_found = 1;
+        }
+    // If there are more than two tokens, error out.
+    } else {
+        printf("ERROR: There are too many items before the equal symbol.\n");
+        error_was_found = 1;
+    }
+    
+    // Check to see if the variable_name does not match any ascript reserved key words.
+    if (!strcmp(variable_name->array, "and") || !strcmp(variable_name->array, "or") || !strcmp(variable_name->array, "continue")) {
+        printf("ERROR: The passed in variable cannot have the same name as a reserved word.\n");
+        error_was_found = 1;
+    }
+
+    // Check to see if an error was found.
+    if (error_was_found) {
+        // Free the strings and return.
+        sfree(&data_type);
+        sfree(&variable_name);
+        sfree(&variable_value);
+        sfree(&left_hand_side);
+        return 1;
+    }
+
+    // Add the value of the incoming variable line to the variable value string.
+    sadd(&variable_value, "string", current_line->tokens[1]);
+    // Get the final value from the variable value.
+    evaluate_variable_value(variables, functions, data_type, variable_value);
+    if (ascript_core_debugger_var) printf("The returned value is this: %s\n", variable_value->array);
+    // Check to see if the the returned string is empty.
+    if (!variable_value->current_num_col) {
+        printf("ERROR: The returned value from the evaluation variable value function is empty.\n");
+        // Free the strings and return.
+        sfree(&data_type);
+        sfree(&variable_name);
+        sfree(&variable_value);
+        sfree(&left_hand_side);
+        return 1;
+    }
+    
+    // Loop through the linked list of variables to see if any match the passed in name.
+    Var_Linked_List_Node * temp = var_ll_search((*variables), variable_name->array);
+    // Check to see if a variable was found in the linked list.
+    if (temp) {
+        // Check to see if the user is trying to re-declare a variable that has already been declared.
+        if (data_type->current_num_col) {
+            printf("ERROR: You are trying to re-declare a variable that has already been defined.\n");
+            sfree(&data_type);
+            sfree(&variable_name);
+            sfree(&variable_value);
+            sfree(&left_hand_side);
+            return 1;
+        } else {
+            // Check to see if there were any quotes in the returned variable value.
+            if (soccurences(variable_value, '"')) {
+                // Check to make sure the found variable is a of type string.
+                if (!strcmp(temp->variable_data_type, "string")) {
+                    if (ascript_core_debugger_var) printf("DEBUG: Updating the variable: %s with the value: %s\n", variable_name->array, variable_value->array);
+                    // Clear the data of the found variable.
+                    memset(temp->data, '\0', sizeof(temp->data));
+                    // Copy the value to the found variable.
+                    strcpy(temp->data, variable_value->array);
+                }
+            // Check to see if there are any decimals in the returned variable value.
+            } else if (soccurences(variable_value, '.')) {
+                if (ascript_core_debugger_var) printf("DEBUG: Updating the variable: %s with the value: %s\n", variable_name->array, variable_value->array);
+                // Check to make sure the found variable is of type float or double.
+                if (!strcmp(temp->variable_data_type, "float") || !strcmp(temp->variable_data_type, "double")) {
+                    // Clear the data of the found variable.
+                    memset(temp->data, '\0', sizeof(temp->data));
+                    // Copy the value to the found variable.
+                    strcpy(temp->data, variable_value->array);
+                }
+            // Anything else is an int.
+            } else {
+                if (ascript_core_debugger_var) printf("DEBUG: Updating the variable %s with the value %s\n", variable_name->array, variable_value->array);
+                // Grabe everything before the decimal by tokenizing the string.
+                stokenize(&variable_value, '.');
+                // Clear the data of the found variable.
+                memset(temp->data, '\0', sizeof(temp->data));
+                // Check to see if there are any tokens.
+                if (variable_value->total_num_tokens) {
+                    // Copy the value to the found variable.
+                    strcpy(temp->data, variable_value->tokens[0]);
+                } else {
+                    // Copy the value to the found variable.
+                    strcpy(temp->data, variable_value->array);
+                }
+            }
+        }
+    // If there was no variable found.
+    } else {
+        // Check to see if a data type was passed in.
+        if (!data_type->current_num_col) {
+            printf("ERROR: You need a data type for an undeclared variable.\n");
+            sfree(&data_type);
+            sfree(&variable_name);
+            sfree(&variable_value);
+            sfree(&left_hand_side);
+            return 1;
+        } else {
+            // Add the variable to the linked list of other variables.
+            if (ascript_core_debugger_var) printf("DEBUG: Adding the variable %s to the linked list of variables.\n", variable_name->array);
+            var_ll_push(variables, variable_name->array, data_type->array, variable_value->array);
+        }
+    }
+
+    sfree(&data_type);
+    sfree(&variable_name);
+    sfree(&variable_value);
+    sfree(&left_hand_side);
+
+    return 0;
+}

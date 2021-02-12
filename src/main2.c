@@ -70,7 +70,7 @@ int main(int argc, char * argv[], char * envp[]) {
     }
 
     // Open the file for reading.
-    source_fp  = fopen(source_file_location, "r");
+    source_fp = fopen(source_file_location, "r");
     if (!source_fp) {
         printf("ERROR: SOmething is fishy about this file '%s', couldn't be opened. Do you have the secret code?\n", source_file_location);
         return 0;
